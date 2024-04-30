@@ -1,15 +1,32 @@
-import { SplashScreen } from '@capacitor/splash-screen';
-import { Camera } from '@capacitor/camera';
+import { SplashScreen } from "@capacitor/splash-screen";
+import { Camera } from "@capacitor/camera";
+
+import { LocalNotifications } from "@capacitor/local-notifications";
+
+LocalNotifications.schedule({
+  notifications: [
+    {
+      title: "On sale",
+      body: "Widgets are 10% off. Act fast!",
+      id: 1,
+      schedule: { at: new Date(Date.now() + 1000 * 5) },
+      sound: null,
+      attachments: null,
+      actionTypeId: "",
+      extra: null,
+    },
+  ],
+});
 
 window.customElements.define(
-  'capacitor-welcome',
+  "capacitor-welcome",
   class extends HTMLElement {
     constructor() {
       super();
 
       SplashScreen.hide();
 
-      const root = this.attachShadow({ mode: 'open' });
+      const root = this.attachShadow({ mode: "open" });
 
       root.innerHTML = `
     <style>
@@ -92,32 +109,34 @@ window.customElements.define(
     connectedCallback() {
       const self = this;
 
-      self.shadowRoot.querySelector('#take-photo').addEventListener('click', async function (e) {
-        try {
-          const photo = await Camera.getPhoto({
-            resultType: 'uri',
-          });
+      self.shadowRoot
+        .querySelector("#take-photo")
+        .addEventListener("click", async function (e) {
+          try {
+            const photo = await Camera.getPhoto({
+              resultType: "uri",
+            });
 
-          const image = self.shadowRoot.querySelector('#image');
-          if (!image) {
-            return;
+            const image = self.shadowRoot.querySelector("#image");
+            if (!image) {
+              return;
+            }
+
+            image.src = photo.webPath;
+          } catch (e) {
+            console.warn("User cancelled", e);
           }
-
-          image.src = photo.webPath;
-        } catch (e) {
-          console.warn('User cancelled', e);
-        }
-      });
+        });
     }
   }
 );
 
 window.customElements.define(
-  'capacitor-welcome-titlebar',
+  "capacitor-welcome-titlebar",
   class extends HTMLElement {
     constructor() {
       super();
-      const root = this.attachShadow({ mode: 'open' });
+      const root = this.attachShadow({ mode: "open" });
       root.innerHTML = `
     <style>
       :host {
